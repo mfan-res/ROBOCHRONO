@@ -1,0 +1,148 @@
+{
+  "_note": [
+    "The evaluation protocol. Changing anything here changes the experiment:",
+    "results produced under a different protocol are not comparable.",
+    "",
+    "What belongs here, as opposed to runtime.json:",
+    "  does changing this alter what the same model returns for the same question?",
+    "  yes -> here.  no -> runtime.json (concurrency, proxying, cache location).",
+    "",
+    "What the dataset contains lives in data/manifest.json.",
+    "How an individual model is adapted lives in configs/models/."
+  ],
+  "version": "1.0",
+  "generation": {
+    "temperature": 0.0,
+    "_temperature_note": [
+      "An experimental control, not a model property. Model cards commonly",
+      "recommend sampling (do_sample=true, temperature around 0.7-1.0), which is",
+      "right for interactive use and wrong here: it makes the same question",
+      "return different answers across runs, so results cannot be reproduced and",
+      "an interrupted run cannot be resumed without changing what it measured."
+    ],
+    "max_new_tokens": 4096,
+    "_max_new_tokens_note": [
+      "Baseline budget. A model may raise this in its own configuration, never",
+      "lower it, so models that fit comfortably inside the baseline are",
+      "unaffected by what any other model declares.",
+      "",
+      "Reasoning models are the case that needs more room: their output is long",
+      "enough that a budget sized for direct answers truncates a substantial",
+      "fraction of it, and a truncated chain of thought contains no answer to",
+      "recover offline."
+    ],
+    "thinking": "disabled",
+    "_thinking_note": [
+      "Models that cannot disable it declare their real state in their own",
+      "configuration. Recording a uniformity that does not exist is worse than",
+      "recording the difference: it invites comparisons that are not valid."
+    ],
+    "timeout": 300,
+    "max_retries": 3,
+    "max_request_bytes": 10000000
+  },
+  "system_prompt": "You are a strict JSON API. Return only one JSON object. Do not include markdown or analysis outside JSON.",
+  "_system_prompt_note": [
+    "Identical for every model, and models may not override it. It states what",
+    "output format the benchmark asks for; whether a model complies is part of",
+    "what is being measured. Tailoring the instruction per model would help some",
+    "models over others."
+  ],
+  "frames": {
+    "_note": [
+      "Frame sampling fixes temporal density rather than frame count.",
+      "",
+      "With a fixed count, video length becomes a confound: the same 16 frames",
+      "spread over a 2-second clip and a 12-second clip give one frame every",
+      "0.1s versus every 0.8s. A low score on the longer scenario then mixes",
+      "'the model is worse here' with 'we showed it less'.",
+      "",
+      "Clips and full episodes use different rates because they are different",
+      "material, not two settings of one parameter: action clips run a few",
+      "seconds, full episodes run one to two minutes.",
+      "",
+      "Known cost, accepted for consistency: the shortest episodes land on fewer",
+      "frames than a fixed count would have given them, and fewer frames measures",
+      "worse on temporal grounding.",
+      "",
+      "frame_order and view_match take still images and no video; their entries",
+      "are listed only so the mapping covers every dimension."
+    ],
+    "by_dimension": {
+      "current_action": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "next_action": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "next_action_with_goal": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "frame_match": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "frame_order": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "view_match": {
+        "mode": "fps",
+        "value": 2.0
+      },
+      "action_time": {
+        "mode": "fps",
+        "value": 1.0
+      }
+    },
+    "min_frames": 4,
+    "frame_factor": 2,
+    "max_frames": 768,
+    "_rounding_note": [
+      "Every adapter converts fps to a frame count through the same function.",
+      "Deriving it separately per adapter lets the same declared rate yield",
+      "different frame counts per model, which does not surface as an error."
+    ]
+  },
+  "parsing": {
+    "strip_reasoning": true,
+    "_strip_reasoning_note": [
+      "Strictly additive: the baseline parser runs first, and these fallbacks",
+      "run only when it returns nothing. Rows they rescue are flagged with",
+      "parse_recovered, so their contribution can be counted or excluded later.",
+      "",
+      "Declared here rather than passed on the command line. As a flag it could",
+      "be omitted from one invocation, and the symptom of omitting it is not an",
+      "error but a score of zero on dimensions whose answers happen to arrive",
+      "wrapped in prose."
+    ]
+  },
+  "degenerate_floor": {
+    "_note": [
+      "The score a strategy reaches without looking at the video: guessing",
+      "uniformly for multiple choice, or answering 'the whole clip' for temporal",
+      "grounding. This is a fault detector, not a pass mark — a score below it",
+      "says something is wrong, but not whether the fault is the model, the",
+      "parsing, or a question measuring something other than intended.",
+      "",
+      "The multiple-choice floor is the nominal 1/4. Two scenarios have only",
+      "three distinct actions and must borrow a distractor from elsewhere, which",
+      "is recognisable without watching and makes those questions effectively",
+      "three-way. Using the nominal value rather than the effective one keeps the",
+      "threshold conservative: it can miss a real problem, but will not invent one."
+    ],
+    "choice": {
+      "metric": "accuracy",
+      "value": 0.25,
+      "label": "random guessing"
+    },
+    "interval": {
+      "metric": "mean_tIoU",
+      "value": 0.13,
+      "label": "answering with the whole video"
+    }
+  }
+}

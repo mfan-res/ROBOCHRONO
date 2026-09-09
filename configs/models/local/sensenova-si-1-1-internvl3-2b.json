@@ -1,0 +1,20 @@
+{
+  "name": "SenseNova-SI-1.1-InternVL3-2B",
+  "adapter": "internvl",
+  "weights": "models/SenseNova-SI-1_1-InternVL3-2B",
+  "environment": "transformers-4x",
+  "official": {
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "The model card shows no transformers inference example; conventions are inherited from the base architecture."
+    }
+  },
+  "media": {
+    "max_image_tiles": 4,
+    "max_video_tiles": 1,
+    "attn_implementation": "sdpa",
+    "use_flash_attn": false,
+    "_note": "max_image_tiles stays at 4 rather than the 12 used in the model card's example: source frames are 640x480, and 12 tiles upsamples them 2.8x before slicing, multiplying visual tokens without adding information. Four tiles gives a budget comparable to what the other adapters spend on the same frame."
+  }
+}

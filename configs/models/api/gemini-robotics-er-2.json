@@ -1,0 +1,32 @@
+{
+  "name": "Gemini-Robotics-ER-2",
+  "adapter": "gemini",
+  "weights": "api:google/gemini-robotics-er-2-preview",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://ai.google.dev/gemini-api/docs/robotics-overview",
+    "transformers": { "value": null, "source": "none", "note": "Served remotely; no local stack." }
+  },
+  "_note": [
+    "An embodied-reasoning model, which is what this benchmark asks about — the",
+    "only entrant trained for robot video rather than adapted to it.",
+    "",
+    "A preview endpoint: the 1.6 version it replaces was shut down two months",
+    "after release. Scores cited from it should say when they were measured,",
+    "and the raw responses are what makes them checkable later."
+  ],
+  "api": {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+    "model": "gemini-robotics-er-2-preview",
+    "key_env": "GEMINI_API_KEY",
+    "max_request_bytes": 94560000,
+    "min_video_seconds": 2.0
+  },
+  "generation": {
+    "thinking": {
+      "value": "always_on",
+      "source": "measured",
+      "note": "Reports thoughtsTokenCount on every call and exposes no switch to disable it."
+    }
+  }
+}

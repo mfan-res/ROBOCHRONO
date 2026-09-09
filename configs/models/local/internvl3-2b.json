@@ -1,0 +1,21 @@
+{
+  "name": "InternVL3-2B",
+  "adapter": "internvl",
+  "weights": "models/InternVL3-2B",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-2B",
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "The base model of SenseNova-SI-1.1-InternVL3-2B — that pairing is why it is in the roster. Card requirement not transcribed."
+    }
+  },
+  "media": {
+    "max_image_tiles": 4,
+    "max_video_tiles": 1,
+    "attn_implementation": "sdpa",
+    "use_flash_attn": false,
+    "_note": "Same budgets as SenseNova-SI-1.1-InternVL3-2B — the pair must see identical inputs for the fine-tune comparison to mean anything."
+  }
+}

@@ -1,0 +1,28 @@
+# Dataset and results are downloaded or produced, not committed.
+__pycache__/
+*.pyc
+.venvs/
+.cache/
+*.egg-info/
+dist/
+build/
+
+# Run-time directories: weights, environments, media cache
+/models
+/.venvs
+/.cache
+
+# Internal working notes — not part of the published framework.
+dev/
+
+# Guarded from the root on purpose: a rule that lives inside the directory
+# it protects disappears with it.
+/data/
+/results/
+
+# The scenario pool: one self-contained directory per scenario, downloaded,
+# never committed.
+/scenarios/
+
+# Maintainer records and one-off tooling — kept locally, not published.
+/internal/

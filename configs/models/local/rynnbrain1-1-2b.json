@@ -1,0 +1,13 @@
+{
+  "name": "RynnBrain1.1-2B",
+  "adapter": "rynnbrain",
+  "weights": "models/RynnBrain1.1-2B",
+  "environment": "transformers-5x",
+  "official": {
+    "url": "https://huggingface.co/Alibaba-DAMO-Academy/RynnBrain1.1-2B",
+    "transformers": {
+      "value": "==5.2.0",
+      "source": "L1"
+    }
+  }
+}

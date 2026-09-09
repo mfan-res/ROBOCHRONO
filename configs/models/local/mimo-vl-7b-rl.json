@@ -1,0 +1,22 @@
+{
+  "name": "MiMo-VL-7B-RL",
+  "adapter": "qwen3_vl",
+  "weights": "models/MiMo-VL-7B-RL",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://github.com/XiaomiMiMo/MiMo-VL",
+    "transformers": { "value": null, "source": "none", "note": "No version pinned by the model card." }
+  },
+  "_note": [
+    "Ships as Qwen2_5_VLForConditionalGeneration, so the Qwen adapter loads it",
+    "unchanged — the adapter keys off the processor convention, not the family.",
+    "No auto_map, so nothing needs patching for offline loading."
+  ],
+  "generation": {
+    "thinking": {
+      "value": "always_on",
+      "source": "measured",
+      "note": "The RL checkpoint emits a <think> block before its answer and offers no switch to suppress it."
+    }
+  }
+}

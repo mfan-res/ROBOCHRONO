@@ -1,0 +1,14 @@
+{
+  "name": "RynnBrain1.1-9B",
+  "adapter": "rynnbrain",
+  "weights": "models/RynnBrain1_1-9B",
+  "environment": "transformers-5x",
+  "official": {
+    "url": "https://huggingface.co/Alibaba-DAMO-Academy/RynnBrain1.1-9B",
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "RynnBrain1.1-2B's card pins ==5.2.0 and this generation shares the stack; the 9B card itself has not been checked."
+    }
+  }
+}

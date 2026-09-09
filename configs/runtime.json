@@ -1,0 +1,16 @@
+{
+  "_note": [
+    "Operational settings. These vary by machine and are deliberately not recorded",
+    "in results: one host may sustain 24 concurrent requests where another cannot,",
+    "and writing that into a result file would make two runs look different when",
+    "they measured the same thing.",
+    "",
+    "Settings that do change output — timeout, retries, request size limits —",
+    "live in protocol.json instead."
+  ],
+  "gpus_per_worker": 1,
+  "api_concurrency": 8,
+  "api_rate_limit": 0,
+  "media_cache_dir": ".cache/media",
+  "proxy": "bypass"
+}

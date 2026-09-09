@@ -1,0 +1,31 @@
+{
+  "_note": [
+    "Which Python environment each model needs.",
+    "",
+    "More than one is required, and this is an upstream constraint rather than a",
+    "preference: some model families only load under transformers 4.x, others only",
+    "under 5.x, and the two requirements are mutually exclusive.",
+    "",
+    "Environment count is kept minimal rather than one per model. Several models",
+    "state no required version at all, so building them a dedicated 'official'",
+    "environment would mean inventing one and calling it official. Changing the",
+    "transformers version also changes model output, so a per-model version would",
+    "make the software stack an uncontrolled variable across the comparison.",
+    "",
+    "Switching is automatic: the orchestrator dispatches each model to the",
+    "interpreter it needs. No manual activation."
+  ],
+  "envs": {
+    "transformers-4x": {
+      "python": ".venvs/tf4/bin/python",
+      "extra": "tf4",
+      "transformers": "4.57.6"
+    },
+    "transformers-5x": {
+      "python": ".venvs/tf5/bin/python",
+      "extra": "tf5",
+      "transformers": "5.15.0"
+    }
+  },
+  "default_env": "transformers-4x"
+}

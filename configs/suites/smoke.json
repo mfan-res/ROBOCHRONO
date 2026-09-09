@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "name": "smoke",
+  "dimensions": null,
+  "scenarios": {
+    "move_gift_tianjihand": "5948c53c44014d1f078da08033b6da555010806d50478b36352dd573963fdf1a",
+    "pack_airpods_gim": "c0d5867f3b569772c05e1565ab5fca6121b8edf712cc9e9fc2f66556a91bcc51"
+  }
+}

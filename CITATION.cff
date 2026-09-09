@@ -1,0 +1,14 @@
+# Citation metadata. A paper describing this benchmark is in preparation;
+# authors, title, identifiers and preferred citation will be filled in
+# upon publication.
+cff-version: 1.2.0
+message: >-
+  A paper describing this benchmark is in preparation. Citation
+  information will be added upon publication; until then, please cite
+  this repository by name.
+title: RoboChrono
+type: dataset
+authors:
+  - name: RoboChrono Team
+license: Apache-2.0
+repository-code: https://github.com/mfan-res/ROBOCHRONO

@@ -1,0 +1,18 @@
+{
+  "name": "RynnBrain1.1-122B-A10B",
+  "adapter": "rynnbrain",
+  "weights": "models/RynnBrain1_1-122B-A10B",
+  "environment": "transformers-5x",
+  "official": {
+    "url": "https://huggingface.co/Alibaba-DAMO-Academy/RynnBrain1.1-122B-A10B",
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "Same generation as RynnBrain1.1-2B (==5.2.0 there); the 122B card has not been checked."
+    }
+  },
+  "resources": {
+    "gpus_per_worker": 4,
+    "_note": "228 GiB of weights. Measured on H100-80GB: four cards leave 17.9 GB per card; three cards need 81.7 GB each and do not fit. Layer splitting happens inside the worker's visible cards."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Cosmos-Reason2-2B",
+  "adapter": "qwen3_vl",
+  "weights": "models/Cosmos-Reason2-2B",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://huggingface.co/nvidia/Cosmos-Reason2-2B",
+    "dtype": {
+      "value": "float16",
+      "source": "L2",
+      "note": "The model card's example uses float16; runs use bfloat16."
+    },
+    "fps": {
+      "value": 4,
+      "source": "L1",
+      "note": "The model card suggests fps=4; the protocol uses 2.0. A known deviation."
+    },
+    "max_tokens": {
+      "value": 4096,
+      "source": "L1",
+      "note": "The model card states this avoids truncated responses."
+    },
+    "output_format": {
+      "value": "<think>...</think> followed by the answer",
+      "source": "L1",
+      "note": "The model card's example prompt asks for this shape; the protocol disables thinking."
+    },
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "The model card states no version."
+    }
+  },
+  "generation": {
+    "thinking": {
+      "value": "disabled",
+      "source": "L6"
+    }
+  }
+}

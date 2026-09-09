@@ -1,0 +1,18 @@
+{
+  "name": "Qwen3-VL-30B-A3B-Instruct",
+  "adapter": "qwen3_vl",
+  "weights": "models/Qwen3-VL-30B-A3B-Instruct",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct",
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "Ran under 4.57.6 in practice; the model card's requirement has not been transcribed. Grade it before release."
+    }
+  },
+  "resources": {
+    "gpus_per_worker": 2,
+    "_note": "58 GiB of MoE weights on one 80 GiB card left too little room for vision activations: long clips peaked ~17 GiB of live tensors mid-forward and 11% of stress calls failed to allocate ~6 GiB more. The dense 32B ran clean on one card; the MoE's activation profile is what differs. Two cards halve replica count, which its 3B-active speed easily affords."
+  }
+}

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "robochrono"
+version = "0.1.0"
+description = "Temporal visual reasoning benchmark on egocentric robot manipulation video"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "torch==2.6.0",
+    "torchvision==0.21.0",
+    "accelerate==1.6.0",
+    "qwen-vl-utils==0.0.14",
+    "decord==0.6.0",
+    "opencv-python",
+    "pillow",
+    "numpy<2",          # decord 0.6.0 is incompatible with numpy 2.x
+    "requests",
+]
+
+# transformers is deliberately absent from `dependencies`. Model families have
+# mutually exclusive requirements — some load only under 4.x, others only under
+# 5.x — so no single pin works for every model, and `pip install robochrono`
+# alone does not give a runnable setup. Install one of the extras below into
+# each environment.
+[project.optional-dependencies]
+tf4 = ["transformers==4.57.6"]
+tf5 = ["transformers==5.15.0"]
+
+# The two extras are mutually exclusive by construction — one pins
+# transformers 4.x, the other 5.x. Declaring that here is what lets
+# `uv sync --extra tf4` resolve at all: without it uv tries to satisfy every
+# extra at once and reports the project as unsatisfiable.
+[tool.uv]
+conflicts = [[{ extra = "tf4" }, { extra = "tf5" }]]
+
+[project.scripts]
+robochrono = "robochrono.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["robochrono*"]

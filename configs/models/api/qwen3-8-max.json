@@ -1,0 +1,20 @@
+{
+  "name": "Qwen3.8-Max",
+  "adapter": "openai_compat",
+  "weights": "api:dashscope/qwen3.8-max",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://help.aliyun.com/zh/model-studio/",
+    "transformers": { "value": null, "source": "none", "note": "Served remotely; no local stack." }
+  },
+  "api": {
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    "model": "qwen3.8-max",
+    "key_env": "DASHSCOPE_API_KEY",
+    "media_url_format": "data_url",
+    "thinking_param": "enable_thinking",
+    "max_request_bytes": 18480000,
+    "min_video_seconds": 2.0,
+    "_note": "Measured runs reached this service through a private gateway; the URL here is the public endpoint for the same API."
+  }
+}

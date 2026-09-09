@@ -1,0 +1,19 @@
+{
+  "name": "Doubao-Seed-2.0-Lite",
+  "adapter": "openai_compat",
+  "weights": "api:ark/doubao-seed-2-0-lite-260428",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://www.volcengine.com/docs/82379",
+    "transformers": { "value": null, "source": "none", "note": "Served remotely; no local stack." }
+  },
+  "api": {
+    "url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    "model": "doubao-seed-2-0-lite-260428",
+    "key_env": "ARK_API_KEY",
+    "media_url_format": "data_url",
+    "send_thinking": true,
+    "max_request_bytes": 59400000,
+    "min_video_seconds": 2.0
+  }
+}

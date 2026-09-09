@@ -1,0 +1,22 @@
+{
+  "name": "Qwen3-VL-235B-A22B-Instruct",
+  "adapter": "qwen3_vl",
+  "weights": "models/Qwen3-VL-235B-A22B-Instruct",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Instruct",
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "Ran under 4.57.6 in practice; the model card's requirement has not been transcribed. Grade it before release."
+    }
+  },
+  "resources": {
+    "gpus_per_worker": 8,
+    "_note": "439 GiB of weights, one replica across eight H100s. The vision tower must live on a card that is nearly free of language weights: its forward on the longest clips peaks at ~42 GiB of activations (measured: ~30 GiB held plus a 12 GiB single piece). Caps of 55 and 40 GiB on card 0 both failed, the second also pushing vision-adjacent layers onto card 1 and overflowing its headroom. 12 GiB admits the tower's own weights and little else, leaving ~67 GiB for activations; the language layers spread over cards 1-7 at 68 GiB caps. int8 would fit four cards but changes numerical precision and comparability.",
+    "max_memory": {
+      "0": "12GiB",
+      "default": "68GiB"
+    }
+  }
+}

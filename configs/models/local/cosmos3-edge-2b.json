@@ -1,0 +1,17 @@
+{
+  "name": "Cosmos3-Edge-2B",
+  "adapter": "cosmos3_edge",
+  "weights": "models/Cosmos3-Edge",
+  "environment": "transformers-5x",
+  "official": {
+    "transformers": {
+      "value": null,
+      "source": "none",
+      "note": "library_name is `cosmos`; the documented inference engines are vLLM-Omni, vLLM and PyTorch, and the card shows no transformers example. Loading it through AutoModelForImageTextToText is not a documented usage."
+    }
+  },
+  "resources": {
+    "gpus_per_worker": 2,
+    "_note": "Not a memory constraint \u2014 a decode one. transformers 5.x falls back to torchvision for video decoding, and eight workers concurrently decoding 400-second episodes exhausted decoder resources (swscaler EAGAIN) on 104 of 150 episode questions. Two cards per worker halves concurrent decodes; the model is small and fast enough that four replicas keep up."
+  }
+}

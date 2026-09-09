@@ -1,0 +1,29 @@
+{
+  "name": "Qwen3-VL-8B-Thinking",
+  "adapter": "qwen3_vl",
+  "weights": "models/Qwen3-VL-8B-Thinking",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Thinking",
+    "out_seq_length": {
+      "value": 40960,
+      "source": "L1"
+    },
+    "transformers": {
+      "value": "==4.57.0",
+      "source": "L1"
+    }
+  },
+  "generation": {
+    "max_new_tokens": {
+      "value": 40960,
+      "source": "L1",
+      "note": "out_seq_length from the model card."
+    },
+    "thinking": {
+      "value": "always_on",
+      "source": "L1",
+      "note": "Built into the checkpoint; disabling it through the chat template has no effect."
+    }
+  }
+}

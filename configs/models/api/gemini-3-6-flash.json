@@ -1,0 +1,19 @@
+{
+  "name": "Gemini-3.6-Flash",
+  "adapter": "gemini",
+  "weights": "api:google/gemini-3.6-flash",
+  "environment": "transformers-4x",
+  "official": {
+    "url": "https://ai.google.dev/gemini-api/docs",
+    "transformers": { "value": null, "source": "none", "note": "Served remotely; no local stack." }
+  },
+  "api": {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+    "model": "gemini-3.6-flash",
+    "key_env": "GEMINI_API_KEY",
+    "max_request_bytes": 94560000,
+    "min_video_seconds": 2.0,
+    "generation_config": { "thinkingConfig": { "thinkingLevel": "minimal" } },
+    "_note": "3.6 rather than a newer Flash: thinkingLevel=minimal is accepted here and measured at zero thought tokens, keeping the thinking setting comparable with the rest of the roster."
+  }
+}
