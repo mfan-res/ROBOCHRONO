@@ -85,7 +85,7 @@ look like as a sequence.
 - **[`uv`](https://docs.astral.sh/uv/)** — it installs Python 3.11 and
   builds the environments below. `curl -LsSf https://astral.sh/uv/install.sh | sh`
 - **`git` and `ffmpeg`** (with `ffprobe`) on PATH.
-- **For local models**: NVIDIA GPU(s) with a driver for CUDA 12.4. The 2B
+- **For local models**: NVIDIA GPU(s) with a driver for CUDA 12.8. The 2B
   model used in the examples runs on a single 24 GB card; the largest
   models declare their own multi-card needs in `configs/models/`. The
   API-only path needs no GPU at all.
@@ -432,7 +432,7 @@ Evaluation-side:
   near a decision boundary; expect per-dimension scores to agree within a
   few tenths of a percentage point, not bit-exactly.
 - **Platform requirements are narrow.** Linux only (the pinned `decord`
-  ships no macOS or Windows wheels), CUDA 12.4 for the pinned torch build,
+  ships no macOS or Windows wheels), CUDA 12.8 for the pinned torch build,
   Python 3.11. API-only evaluation still needs Linux for the same reason.
 
 ---

@@ -20,7 +20,7 @@ and the five configured API models:
 
 | Requirement | Why |
 | --- | --- |
-| Linux, NVIDIA driver ≥ CUDA 12.4 | the pinned torch build is cu124 |
+| Linux, NVIDIA driver ≥ CUDA 12.8 | the pinned torch build is cu128 |
 | `git`, `ffmpeg` (with `ffprobe`) | clone; media probing and shrinking |
 | Disk: up to ~74 GB for the full dataset (a single scenario is 0.3–14 GB; per-scenario sizes in docs/DATA_FORMAT.md), ~12 GB for the two Python environments, plus your models' weights (4 GB for the 2B example; the largest models run to hundreds of GB — see the table in 1.4; results are megabytes) | see 1.3 and 1.4 |
 | Access to the dataset (see 1.3) | the pool of scenario directories |
