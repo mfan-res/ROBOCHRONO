@@ -9,8 +9,19 @@ description = "Temporal visual reasoning benchmark on egocentric robot manipulat
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 dependencies = [
-    "torch==2.6.0",
-    "torchvision==0.21.0",
+    # cu128, which is what Blackwell needs: the cu124 build carries no sm_120
+    # kernels, and a card it cannot serve still reports as available —
+    # torch.cuda.is_available() is True and every launch fails.
+    #
+    # 2.7.0 rather than a later release, and pinned to this index rather than
+    # PyPI, are the same decision: PyPI's 2.7.0 wheel is cu126 (no sm_120),
+    # and the versions whose PyPI wheel is already cu128 all carry
+    # torchvision >= 0.23, which changed the numerics of the BICUBIC
+    # antialiased resize every video frame passes through. 0.22.0 still
+    # produces the byte sequence the published results were computed on, so
+    # GPU architecture stays the only difference against them.
+    "torch==2.7.0",
+    "torchvision==0.22.0",
     "accelerate==1.6.0",
     "qwen-vl-utils==0.0.14",
     "decord==0.6.0",
@@ -35,6 +46,19 @@ tf5 = ["transformers==5.15.0"]
 # extra at once and reports the project as unsatisfiable.
 [tool.uv]
 conflicts = [[{ extra = "tf4" }, { extra = "tf5" }]]
+
+# torch and torchvision come from PyTorch's own cu128 index, not PyPI. PyPI
+# serves one CUDA build per version and for 2.7.0 that build is cu126, which
+# has no sm_120 kernels. `explicit = true` keeps the index to these two
+# packages: everything else still resolves from PyPI.
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [project.scripts]
 robochrono = "robochrono.cli:main"
