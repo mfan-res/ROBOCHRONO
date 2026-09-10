@@ -12,7 +12,7 @@
     }
   },
   "resources": {
-    "gpus_per_worker": 2,
-    "_note": "58 GiB of MoE weights on one 80 GiB card left too little room for vision activations: long clips peaked ~17 GiB of live tensors mid-forward and 11% of stress calls failed to allocate ~6 GiB more. The dense 32B ran clean on one card; the MoE's activation profile is what differs. Two cards halve replica count, which its 3B-active speed easily affords."
+    "gpus_per_worker": 1,
+    "_note": "One card per worker on 96 GB hardware. The two-card rule was measured on 80 GB cards, where 58 GiB of MoE weights left ~22 GiB for vision activations that peaked at ~17 GiB, and 11% of stress calls failed asking for ~6 GiB more. The same 58 GiB on a 96 GB card leaves ~38 GiB, more than twice the measured peak. The dense 32B already ran on one card at 80 GB; it is the MoE's activation profile, not its weights, that needed the second card. Not re-measured against this model directly - if it OOMs, put this back to 2."
   }
 }

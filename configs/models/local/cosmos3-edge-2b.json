@@ -11,7 +11,7 @@
     }
   },
   "resources": {
-    "gpus_per_worker": 2,
-    "_note": "Not a memory constraint \u2014 a decode one. transformers 5.x falls back to torchvision for video decoding, and eight workers concurrently decoding 400-second episodes exhausted decoder resources (swscaler EAGAIN) on 104 of 150 episode questions. Two cards per worker halves concurrent decodes; the model is small and fast enough that four replicas keep up."
+    "gpus_per_worker": 1,
+    "_note": "One card per worker on 96 GB hardware. The two-card rule was never a memory constraint: eight workers decoding 400-second episodes concurrently exhausted decoder resources (swscaler EAGAIN) on 104 of 150 episode questions, and halving the concurrent decodes was the cheapest fix. Re-measured 2026-09-11 on the 96 GB host (192 threads, 1.7 TB RAM) by running the decode alone, without the model: transformers 5.15.0 load_video over the 48 longest episodes in the pool (129-414 frames) at concurrency 8 completed 48/48 with no failures. The decode backend is unchanged between the two hosts - PyAV 18.1.0, pinned identically in both lockfiles. What differs is the core count. If swscaler EAGAIN appears in the log, put this back to 2; the probe covered the decode call in isolation, not the processor path under eight resident models."
   }
 }
