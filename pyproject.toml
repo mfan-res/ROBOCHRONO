@@ -9,8 +9,13 @@ description = "Temporal visual reasoning benchmark on egocentric robot manipulat
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 dependencies = [
-    "torch==2.6.0",
-    "torchvision==0.21.0",
+    # cu128 wheels, which is what Blackwell needs: the cu124 build carries no
+    # sm_120 kernels, and a card it cannot serve still reports as available —
+    # torch.cuda.is_available() is True and every launch fails. The PyPI
+    # wheels for these two versions are already cu128, so pinning them keeps
+    # the single index; torch 2.7 would have needed a second one.
+    "torch==2.8.0",
+    "torchvision==0.23.0",
     "accelerate==1.6.0",
     "qwen-vl-utils==0.0.14",
     "decord==0.6.0",
