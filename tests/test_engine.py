@@ -149,7 +149,7 @@ class AnswersThenBreaks(Adapter):
 class BreakingDimension:
     name = "current_action"
     def units(self, items): return DIMENSION.units(items)
-    def parts(self, unit): return DIMENSION.parts(unit)
+    def parts(self, unit, data_root=None): return DIMENSION.parts(unit, data_root)
     def rows(self, unit, text, ctx): raise ValueError("scoring exploded")
     def error_rows(self, unit, error):
         return [{"id": unit.key, "model_output": None, "error": error}]

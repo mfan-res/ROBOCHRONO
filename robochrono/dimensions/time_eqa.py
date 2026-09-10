@@ -151,6 +151,64 @@ def _video_seconds(items: list[dict[str, Any]]) -> float | None:
     return None
 
 
+# One ffprobe per distinct video file, not per question: an episode carries
+# many questions, and workers keep a dimension instance across units.
+_DURATION_CACHE: dict[str, float] = {}
+
+
+def ensure_video_seconds(items: list[dict[str, Any]], data_root: Any) -> float:
+    """The duration the prompt states, measured off the media when the data
+    does not carry it.
+
+    ``input.video_seconds`` is the duration's home, but no shipped question
+    file has it (the field was lost in a pipeline rewrite), so the fallback
+    measures the episode with ffprobe and writes the value back into the
+    in-memory items — ``rows`` rebuilds the prompt later and must state the
+    same number. The question files on disk are never touched, so scenario
+    hashes do not move.
+
+    Failure is loud by design: a missing video or an unreadable duration
+    raises, which the engine records as an error row. Silently omitting the
+    sentence would put some questions back in the no-duration condition and
+    make the run internally inconsistent.
+    """
+    declared = _video_seconds(items)
+    if declared is not None:
+        return declared
+    from pathlib import Path
+
+    from ..media_prep import video_duration
+
+    relative = video_path_for_item(items[0])
+    path = Path(relative)
+    if not path.is_absolute():
+        if data_root is None:
+            raise ValueError(
+                f"question {items[0].get('id')}: no input.video_seconds and no "
+                f"data_root to resolve {relative!r} against — cannot state the "
+                f"video duration the prompt requires")
+        path = Path(data_root) / path
+    key = str(path)
+    seconds = _DURATION_CACHE.get(key)
+    if seconds is None:
+        if not path.exists():
+            raise ValueError(
+                f"question {items[0].get('id')}: video not found at {path} — "
+                f"cannot measure the duration the prompt requires")
+        measured = video_duration(path)
+        if not measured or measured <= 0:
+            raise ValueError(
+                f"question {items[0].get('id')}: ffprobe could not read a "
+                f"duration from {path} — cannot state the duration the "
+                f"prompt requires")
+        seconds = _DURATION_CACHE[key] = round(float(measured), 3)
+    for item in items:
+        data = item.get("input")
+        if isinstance(data, dict):
+            data["video_seconds"] = seconds
+    return seconds
+
+
 def parse_multi_interval_text(text: str, question_ids: list[str]) -> dict[str, dict[str, Any]]:
     """Split a multi-answer response back into per-question predictions.
 
@@ -411,7 +469,11 @@ class TimeEqaTask:
         """
         return one_item_per_unit(items)
 
-    def parts(self, unit: Unit) -> list[dict[str, Any]]:
+    def parts(self, unit: Unit, data_root: Any = None) -> list[dict[str, Any]]:
+        # The duration line is non-negotiable for this dimension; measure it
+        # off the media when the question does not carry it. Writing the value
+        # into the items here is what makes rows() rebuild the same prompt.
+        ensure_video_seconds(unit.items, data_root)
         video_path = video_path_for_item(unit.items[0])
         return [video_part(video_path), text_part(build_prompt(unit.items))]
 

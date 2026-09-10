@@ -123,7 +123,7 @@ def _run_unit(dimension: Dimension, unit: Unit, adapter: Adapter,
     text: str | None = None
     try:
         result: AdapterResult = adapter.call(
-            resolve_parts(dimension.parts(unit), data_root),
+            resolve_parts(dimension.parts(unit, data_root), data_root),
             frames=frames, key=unit.key)
         text = result.text
         ctx = CallContext(frames_used=result.frames_used, usage=result.usage,

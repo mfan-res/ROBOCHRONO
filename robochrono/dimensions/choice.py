@@ -382,7 +382,7 @@ class ChoiceTask:
     def units(self, items: list[dict[str, Any]]) -> list[Unit]:
         return one_item_per_unit(items)
 
-    def parts(self, unit: Unit) -> list[dict[str, Any]]:
+    def parts(self, unit: Unit, data_root: Any = None) -> list[dict[str, Any]]:
         item = unit.items[0]
         return self.spec.media(item, self.spec.prompt(item))
 

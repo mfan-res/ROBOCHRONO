@@ -57,8 +57,13 @@ class Dimension(Protocol):
         """Group questions into model calls."""
         ...
 
-    def parts(self, unit: Unit) -> list[dict[str, Any]]:
-        """Assemble what is sent to the model: text, image and video parts."""
+    def parts(self, unit: Unit, data_root: Any = None) -> list[dict[str, Any]]:
+        """Assemble what is sent to the model: text, image and video parts.
+
+        ``data_root`` is the scenario directory the unit's media paths are
+        relative to. Dimensions whose prompt depends on a property of the
+        media itself (action_time states the video's duration) resolve it
+        here; the others ignore it."""
         ...
 
     def rows(self, unit: Unit, text: str, ctx: CallContext) -> list[dict[str, Any]]:
