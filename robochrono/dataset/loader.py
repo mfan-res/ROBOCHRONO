@@ -43,7 +43,8 @@ def resolve_media(data_root: Any, scenario: str, relative_path: str) -> Path:
 
 
 def load_questions(data_root: Any, scenario: str, dimension: str, *,
-                   bank: QuestionBank | None = None) -> list[dict[str, Any]]:
+                   bank: QuestionBank | None = None,
+                   keep: set[str] | None = None) -> list[dict[str, Any]]:
     """Load every question for one (scenario, dimension), rendered.
 
     A stored question names the action it is about; the sentence a model reads
@@ -55,6 +56,13 @@ def load_questions(data_root: Any, scenario: str, dimension: str, *,
     execution load data by different paths, the check validates something other
     than what actually runs — it can warn on data that works, and stay silent
     when something is genuinely wrong.
+
+    ``keep`` restricts the result to questions whose id is listed, and is how a
+    run reproduces the question set of an earlier one. It filters here, at the
+    single point where questions enter the evaluation, so every caller —
+    preflight, the dry run, both execution paths — narrows identically. The
+    files on disk are untouched, so scenario hashes and suite pins do not move
+    and the run still merges with the full run it is a subset of.
     """
     path = qa_path(data_root, scenario, dimension)
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -62,11 +70,29 @@ def load_questions(data_root: Any, scenario: str, dimension: str, *,
     if not isinstance(items, list):
         raise ValueError(f"{path} must be a list, or contain an `items` list")
     questions = [q for q in items if isinstance(q, dict)]
+    if keep is not None:
+        questions = [q for q in questions if str(q.get("id")) in keep]
     if bank is None:
         bank = load_question_bank(data_root)
     for question in questions:
         render(question, dimension, scenario, bank)
     return questions
+
+
+def read_item_ids(path: Any) -> set[str]:
+    """Read a question-id list: one id per line, ``#`` comments and blanks
+    ignored.
+
+    A plain text file rather than a flag repeated a thousand times, because the
+    lists that matter are long and belong in version control next to whatever
+    produced them.
+    """
+    text = Path(path).read_text(encoding="utf-8")
+    ids = {line.strip() for line in text.splitlines()
+           if line.strip() and not line.lstrip().startswith("#")}
+    if not ids:
+        raise ValueError(f"{path} lists no question ids")
+    return ids
 
 
 _MEDIA_KEYS = ("clip_path", "video_path", "image_path")

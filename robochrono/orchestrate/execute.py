@@ -98,6 +98,7 @@ def execute_model(
     rate_limit: float = 0.0,
     limit_items: int | None = None,
     limit_groups: int | None = None,
+    keep: set[str] | None = None,
     overwrite: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Run one model's specs serially; return summaries by spec key."""
@@ -108,7 +109,8 @@ def execute_model(
         print(f"[{model.slug}] {spec.scenario}/{spec.dimension}", flush=True)
         dimension = dimensions.build(spec.dimension,
                                      strip_reasoning=protocol.strip_reasoning)
-        items = load_questions(data_root, spec.scenario, spec.dimension, bank=bank)
+        items = load_questions(data_root, spec.scenario, spec.dimension,
+                               bank=bank, keep=keep)
         store = ResultStore(spec.store_path(run_dir))
         summaries[spec.key] = engine.run(
             dimension, items, adapter, store,
@@ -137,6 +139,7 @@ def execute(
     gpus_per_worker: int = 1,
     limit_items: int | None = None,
     limit_groups: int | None = None,
+    keep: set[str] | None = None,
     overwrite: bool = False,
     models_dir: Any = "configs/models",
     protocol_path: Any = "configs/protocol.json",
@@ -166,7 +169,7 @@ def execute(
                 model, model_specs, protocol=protocol, data_root=data_root,
                 run_dir=run_dir.path, adapter_runtime=adapter_runtime,
                 gpus=gpus, gpus_per_worker=per_worker,
-                limit_items=limit_items, limit_groups=limit_groups,
+                limit_items=limit_items, limit_groups=limit_groups, keep=keep,
                 overwrite=overwrite,
                 model_path=Path(models_dir) / model.kind / f"{model.slug}.json",
                 protocol_path=protocol_path))
@@ -177,6 +180,6 @@ def execute(
                 run_dir=run_dir.path, adapter_runtime=adapter_runtime,
                 concurrency=api_concurrency if is_api else 1,
                 rate_limit=api_rate_limit if is_api else 0.0,
-                limit_items=limit_items, limit_groups=limit_groups,
+                limit_items=limit_items, limit_groups=limit_groups, keep=keep,
                 overwrite=overwrite))
     return summaries

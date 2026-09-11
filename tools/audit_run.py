@@ -24,7 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from robochrono.config.suites import load_suite, pins_digest  # noqa: E402
-from robochrono.dataset.loader import load_questions  # noqa: E402
+from robochrono.dataset.loader import load_questions, read_item_ids  # noqa: E402
 from robochrono.dataset.render import load_question_bank  # noqa: E402
 from robochrono.results.runid import read_run_record  # noqa: E402
 
@@ -35,6 +35,10 @@ def main() -> int:
     ap.add_argument("--data-root", required=True)
     ap.add_argument("--suite", default=None,
                     help="default: the suite named in run.json")
+    ap.add_argument("--items-file", default=None,
+                    help="audit against this question-id list instead of the "
+                         "whole dimension — for a run made with the same "
+                         "--items-file")
     args = ap.parse_args()
 
     problems: list[str] = []
@@ -55,12 +59,20 @@ def main() -> int:
     print(f"models    {', '.join(models)}")
     print(f"invocation {' '.join(invocation) if invocation else '(not recorded — pre-audit-era run)'}")
 
+    # A run made with --items-file holds a named subset on purpose. Audited
+    # against the whole dimension it reads as short everywhere, which is the
+    # opposite of useful: the check exists to catch an *unintended* shortfall.
+    keep = read_item_ids(args.items_file) if args.items_file else None
+    if keep is not None:
+        print(f"items     {len(keep)} id(s) from {args.items_file}")
+
     bank = load_question_bank(args.data_root)
     expected: dict[tuple[str, str], int] = {}
     for scenario in suite.scenarios:
         for dimension in suite.dimensions:
             expected[(scenario, dimension)] = len(
-                load_questions(args.data_root, scenario, dimension, bank=bank))
+                load_questions(args.data_root, scenario, dimension,
+                               bank=bank, keep=keep))
 
     total_err = total_q = 0
     for model in models:

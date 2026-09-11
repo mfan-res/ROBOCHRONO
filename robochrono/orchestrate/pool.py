@@ -302,6 +302,7 @@ def run_model_pool(
     gpus_per_worker: int = 1,
     limit_items: int | None = None,
     limit_groups: int | None = None,
+    keep: set[str] | None = None,
     overwrite: bool = False,
     model_path: Any = None,
     protocol_path: Any = "configs/protocol.json",
@@ -327,7 +328,8 @@ def run_model_pool(
     for spec in specs:
         dim = dims[spec.key] = dimensions.build(
             spec.dimension, strip_reasoning=protocol.strip_reasoning)
-        items = load_questions(data_root, spec.scenario, spec.dimension, bank=bank)
+        items = load_questions(data_root, spec.scenario, spec.dimension,
+                               bank=bank, keep=keep)
         store = stores[spec.key] = ResultStore(spec.store_path(run_dir))
         if overwrite:
             moved = store.displace()

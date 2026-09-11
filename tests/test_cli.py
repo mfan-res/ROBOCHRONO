@@ -130,6 +130,53 @@ check("counts reported", "2 (model × scenario × dimension)" in result.stdout
       and "media touched" in result.stdout)
 check("nothing written", not dry_root.exists())
 
+print("6b. --items-file reproduces a question set exactly")
+bank_ = load_question_bank(DATA, [scenario])
+every = [str(q["id"])
+         for q in load_questions(DATA, scenario, dims[0], bank=bank_)]
+chosen = every[1::3]                       # an irregular subset, as a real one is
+ids_file = work / "items.txt"
+ids_file.write_text("# a comment line is ignored\n\n"
+                    + "".join(f"{i}\n" for i in chosen), encoding="utf-8")
+result = cli("eval", "--data-root", "scenarios", "--models-dir", str(work / "models"),
+             "--results-root", str(dry_root), "--scenarios", scenario,
+             "--dimensions", dims[0], "--items-file", str(ids_file), "--dry-run")
+check("subset dry run exits cleanly", result.returncode == 0, result.stderr[-200:])
+check("exactly the listed questions run",
+      f"per model: {len(chosen)} question(s)" in result.stdout,
+      f"wanted {len(chosen)} of {len(every)}")
+check("the id count is reported",
+      f"--items-file: {len(chosen)} question(s) selected" in result.stdout)
+
+bad = work / "bad.txt"
+bad.write_text(f"{chosen[0]}\nnot_a_scenario/file-999/s99@{dims[0]}\n",
+               encoding="utf-8")
+result = cli("eval", "--data-root", "scenarios", "--models-dir", str(work / "models"),
+             "--results-root", str(dry_root), "--scenarios", scenario,
+             "--dimensions", dims[0], "--items-file", str(bad), "--dry-run")
+check("an id matching nothing is refused, not silently dropped",
+      result.returncode != 0 and "match nothing" in (result.stdout + result.stderr))
+check("still nothing written", not dry_root.exists())
+
+# The dry run and the real run reach the data by different calls; a filter
+# that narrowed only the estimate would be the worst possible failure here.
+subset_root = work / "subset-results"
+result = cli("eval", "--data-root", "scenarios", "--models-dir", str(work / "models"),
+             "--results-root", str(subset_root), "--scenarios", scenario,
+             "--dimensions", dims[0], "--items-file", str(ids_file),
+             "--no-dispatch")
+check("subset eval exits cleanly", result.returncode == 0,
+      result.stdout[-300:].strip())
+subset_rows = [json.loads(line)
+               for path in subset_root.glob("*/replay-2b/*/*.jsonl")
+               for line in path.read_text().splitlines() if line.strip()]
+check("only the listed questions were answered",
+      sorted({r["id"] for r in subset_rows}) == sorted(chosen),
+      f"{len({r['id'] for r in subset_rows})} distinct id(s)")
+subset_summary = next(subset_root.glob("*/replay-2b/*/*.summary.json"))
+check("the summary counts the subset, not the file",
+      json.loads(subset_summary.read_text())["answered"] == len(chosen))
+
 print("7. preflight verdicts through the CLI")
 result = cli("preflight", "--data-root", "scenarios", "--models-dir", str(work / "models"),
              "--scenarios", scenario, "--dimensions", *dims)
